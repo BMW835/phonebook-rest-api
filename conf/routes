@@ -15,5 +15,12 @@ GET /phones controllers.HomeController.getPhones
 
 POST /phone/:id controllers.HomeController.modPhone(id:Long)
 
+DELETE /phone/:id controllers.HomeController.delPhone(id:Long)
+
+GET /phones/searchByName controllers.HomeController.byName(nameSubstring:String)
+
+GET /phones/searchByNumber controllers.HomeController.byNumber(phoneSubstring:String)
+
+
 
 GET /all controllers.HomeController.all

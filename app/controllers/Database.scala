@@ -1,16 +1,7 @@
 package controllers
 
+import models._
 import scala.slick.driver.PostgresDriver.simple._
-import scala.util.{Failure, Success, Try}
-
-case class Phone(
-                  id: Long,
-                  name: String,
-                  phone: String)
-
-case class PhoneForm(
-                  phone: String,
-                  name: String)
 
 class Phonebook(tag: Tag) extends Table[(Long, String, String)](tag, "phonebook") {
   def id: Column[Long] = column[Long]("id")
@@ -46,15 +37,10 @@ trait Database {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
-        //Try(
           phones
           .filter(_.id === id)
           .map(c => (c.name, c.phone))
           .update((pf.name, pf.phone))
-      //) match {
-      //    case Success(_) => println("Record successfully updated!")
-      //    case Failure(_) => println("An error occurred!")
-      //  }
     }
   }
 
@@ -64,37 +50,29 @@ trait Database {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
-        Try(phones
+          phones
           .filter(_.id === id)
-          .delete) match {
-          case Success(_) => println("Record successfully updated!")
-          case Failure(_) => println("An error occurred!")
-        }
+          .delete
     }
   }
 
-  def byName(name: String): Unit = {
+  def nameLike(sub: String): List[Phone] = {
     val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
     Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
-        phones.list foreach { row => //if row._1 like name
-          println("id " + row._1 + " username " + row._2 + " phone " + row._3)
-        }
+        phones.filter(_.name like s"%$sub%").list.map { case (id, name, phone) => Phone(id, name, phone) }
     }
   }
 
-  def clear(): Unit = {
+  def phoneLike(sub: String): List[Phone] = {
     val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
     Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
-        Try(phones.delete) match {
-          case Success(_) => println("Database cleared!")
-          case Failure(_) => println("Database not cleared!")
-        }
+        phones.filter(_.phone like s"%$sub%").list.map { case (id, name, phone) => Phone(id, name, phone) }
     }
   }
 
