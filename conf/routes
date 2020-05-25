@@ -8,3 +8,12 @@ GET     /                           controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+POST /phones/createNewPhone controllers.HomeController.addPhone
+
+GET /phones controllers.HomeController.getPhones
+
+POST /phone/:id controllers.HomeController.modPhone(id:Long)
+
+
+GET /all controllers.HomeController.all
