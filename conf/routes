@@ -24,3 +24,8 @@ GET /phones/searchByNumber controllers.HomeController.byNumber(phoneSubstring:St
 
 
 GET /all controllers.HomeController.all
+
+GET     /person                       controllers.HomeController.getName
+GET     /person/:name                 controllers.HomeController.updateName(name: String)
+GET /jsr                          controllers.HomeController.jsRoutes
+

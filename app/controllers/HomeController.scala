@@ -17,14 +17,15 @@ import play.api.libs.functional.syntax._
 
 import scala.concurrent.ExecutionContext
 
+
+import play.api.libs.json.Json
+import play.api.routing.JavaScriptReverseRouter
+
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-  def getName = Action {
-    Ok(Json.toJson("todo"))
+    Ok(views.html.index("Play"))
   }
 
   val phoneForm: Form[PhoneForm] = Form(
@@ -35,7 +36,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
   def addPhone()= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
-      _ => { BadRequest(views.html.index()) },
+      _ => { BadRequest(views.html.index("Play")) },
       phone => {
         DB.add(phone)
         Redirect(routes.HomeController.index)
@@ -56,7 +57,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
   def modPhone(id: Long)= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
-      _ => { BadRequest(views.html.index()) },
+      _ => { BadRequest(views.html.index("Play")) },
       phone => {
         DB.mod(id, phone)
         Redirect(routes.HomeController.index)
@@ -88,10 +89,28 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       )
     )
   }
-  
+
 
   def all() = Action {
     Ok(Json.toJson(DB.all()))
+  }
+
+
+  def getName = Action { implicit request =>
+    Ok(Json.toJson(NameStorage.getName))
+  }
+
+  def updateName(name: String) = Action { implicit request =>
+    NameStorage.setName(name)
+    Ok(Json.toJson(NameStorage.getName))
+  }
+
+  def jsRoutes = Action { implicit request =>
+    Ok(
+      JavaScriptReverseRouter("jsRoutes")(
+        routes.javascript.HomeController.getName,
+        routes.javascript.HomeController.updateName
+      )).as("text/javascript")
   }
 
 

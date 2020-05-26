@@ -31,3 +31,5 @@ libraryDependencies ++= Seq(
     Test,
   "com.netflix.rxjava" % "rxjava-scala" % "0.20.7"
 )
+
+libraryDependencies += "org.webjars" % "jquery" % "2.1.3"
