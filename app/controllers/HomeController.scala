@@ -96,11 +96,11 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
 
-  def getName = Action { implicit request =>
+  def getName = Action { //implicit request =>
     Ok(Json.toJson(NameStorage.getName))
   }
 
-  def updateName(name: String) = Action { implicit request =>
+  def updateName(name: String) = Action { //implicit request =>
     NameStorage.setName(name)
     Ok(Json.toJson(NameStorage.getName))
   }
@@ -109,7 +109,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
         routes.javascript.HomeController.getName,
-        routes.javascript.HomeController.updateName
+        routes.javascript.HomeController.updateName,
+        routes.javascript.HomeController.byName
       )).as("text/javascript")
   }
 
