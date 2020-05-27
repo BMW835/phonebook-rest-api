@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $('#get_name').click(function() {
-        jsRoutes.controllers.HomeController.getPhones().ajax({
+        jsRoutes.controllers.HomeController.getName().ajax({
             success: function(result) {
                 $("#name").text(result);
             },
@@ -25,28 +25,47 @@ $(document).ready(function() {
     });
 
     $('#searchByName').click(function() {
-            var inputName = $("#input_name").val()
-            jsRoutes.controllers.HomeController.byName(inputName).ajax({
-                success: function(result) {
-                    $("#name").text(result[0].name);
+        $('#main_table').empty();
+        var inputName = $("#input_name").val()
+        jsRoutes.controllers.HomeController.byName(inputName).ajax({
+            success: function(result) {
+                $("#name").text(result[0].name);
 
 
-                          txt = "";
-                          txt += "<table border='1'>"
-                          for (x in myObj) {
-                            txt += "<tr><td>" + myObj[x].name + "</td></tr>";
-                          }
-                          txt += "</table>"
-                          document.getElementById("demo").innerHTML = txt;
-}
 
 
-                },
-                failure: function(err) {
-                    var errorText = 'There was an error';
-                    $("#name").text(errorText);
+                var table = "<table border='1'>"
+                table += '<tr><td>' + 'Name' + '</td><td>' + 'Phone' + '</td><td>' + 'Delete' + '</td></tr>';
+
+
+
+                var test = $('<button>Test</button>').click(function () {
+                        alert('hi');
+                    });
+                table +=  test ;
+
+
+                for(i in result) {
+                    table += '<tr>';
+                    table += '<td>' + result[i].name + '</td>';
+                    table += '<td>' + result[i].phone + '</td>';
+                    table += '<td><button type="button" class="deletebtn' + i + 'n" title="Remove row">Delete ' + result[i].name + result[i].id +'</button></td>';
+                    $(document).on('click', 'button.deletebtn' + i +'n', function () {
+                                                             alert('hi, ' + result[i].id)
+                                                         });
+
+
+                    table += '</tr>';
+
                 }
-            });
+                table += "</table>"
+                $('#main_table').append(table);
+            },
+            failure: function(err) {
+                var errorText = 'There was an error';
+                $("#name").text(errorText);
+            }
         });
+    });
 
 });
