@@ -1,14 +1,8 @@
 $(document).ready(function() {
     $('#get_name').click(function() {
-        jsRoutes.controllers.HomeController.getName().ajax({
-            success: function(result) {
-                $("#name").text(result);
-            },
-            failure: function(err) {
-                var errorText = 'There was an error';
-                $("#name").text(errorText);
-            }
-        });
+
+
+
     });
 
     $('#set_name').click(function() {
@@ -29,34 +23,24 @@ $(document).ready(function() {
         var inputName = $("#input_name").val()
         jsRoutes.controllers.HomeController.byName(inputName).ajax({
             success: function(result) {
-                $("#name").text(result[0].name);
-
-
-
-
                 var table = "<table border='1'>"
                 table += '<tr><td>' + 'Name' + '</td><td>' + 'Phone' + '</td><td>' + 'Delete' + '</td></tr>';
-
-
-
-                var test = $('<button>Test</button>').click(function () {
-                        alert('hi');
-                    });
-                table +=  test ;
-
-
                 for(i in result) {
                     table += '<tr>';
                     table += '<td>' + result[i].name + '</td>';
                     table += '<td>' + result[i].phone + '</td>';
-                    table += '<td><button type="button" class="deletebtn' + i + 'n" title="Remove row">Delete ' + result[i].name + result[i].id +'</button></td>';
-                    $(document).on('click', 'button.deletebtn' + i +'n', function () {
-                                                             alert('hi, ' + result[i].id)
-                                                         });
-
-
+                    table += '<td><button type="button" class="deletebtn' + i + '" title="Remove row">Delete ' + result[i].name + '</button></td>';
+                    $(document).on('click', 'button.deletebtn' + i, function () {
+                    var name = result[i].name;
+                        $.ajax({
+                            url: 'http://localhost:9000/phone/' + result[i].id,
+                            method: 'DELETE',
+                            success: function() {
+                                $("#name").text(name + ' deleted!');
+                            },
+                        });
+                    });
                     table += '</tr>';
-
                 }
                 table += "</table>"
                 $('#main_table').append(table);

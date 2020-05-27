@@ -30,9 +30,9 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
   val phoneForm: Form[PhoneForm] = Form(
     mapping(
-      "id" -> longNumber,
-      "name" -> text,
-      "phone" -> text
+      //"id" -> longNumber,
+      "phoneNumber" -> text,
+      "name" -> text
     )(PhoneForm.apply)(PhoneForm.unapply))
 
   def addPhone()= Action { implicit request =>

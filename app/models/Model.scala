@@ -6,9 +6,8 @@ case class Phone(
                   phone: String)
 
 case class PhoneForm(
-                      id: Long,
-                      name: String,
-                      phone: String)
+                      phone: String,
+                      name: String)
 
 object NameStorage {
   private var mName = "Bob1"
