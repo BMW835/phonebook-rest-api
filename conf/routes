@@ -6,9 +6,6 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-
 POST /phones/createNewPhone controllers.HomeController.addPhone
 
 GET /phones controllers.HomeController.getPhones
@@ -19,13 +16,10 @@ DELETE /phone/:id controllers.HomeController.delPhone(id:Long)
 
 GET /phones/searchByName controllers.HomeController.byName(nameSubstring:String)
 
-GET /phones/searchByNumber controllers.HomeController.byNumber(phoneSubstring:String)
+GET /phones/searchByNumber controllers.HomeController.byPhone(phoneSubstring:String)
 
-
-
-GET /all controllers.HomeController.all
-
-GET     /person                       controllers.HomeController.getName
-GET     /person/:name                 controllers.HomeController.updateName(name: String)
 GET /jsr                          controllers.HomeController.jsRoutes
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 

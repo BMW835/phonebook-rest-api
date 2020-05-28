@@ -13,19 +13,30 @@
 
 <body>
 
-
-<input type="button" value="Set Name" id="set_name" >
+<table>
+    <tr >
+        <td colspan="3" align="center"><b>Phonebook</b></td>
+    </tr>
+    <tr>
+        <td>Input Name:</td>
+        <td><input type="text" value="Name" id="input_name"></td>
+        <td><input type="button" value="Search by Name" id="searchByName" ></td>
+    </tr>
+    <tr>
+        <td>Input Phone:</td>
+        <td><input type="text" value="0000" id="input_phone"></td>
+        <td><input type="button" value="Search by Phone" id="searchByPhone" ></td>
+    </tr>
+</table>
+<input type="button" value="Save New Contact" id="add_phone" >
 <br>
-<input type="button" value="Get Name" id="get_name" >
+<span> Current status: </span>
+<span  id="status"></span>
 <br>
-<b>Поиск по имени</b>
 <br>
-<input type="button" value="Search by name" id="searchByName" >
-<input type="text" value="im" id="input_name">
-<span> Current Name is: </span>
-<span  id="name"></span>
-<br>
+<td align="center"><input type="button" value="Refresh Table" id="all" ></td>
 <div id="main_table"></div>
+
 
 
 </body>

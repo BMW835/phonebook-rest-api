@@ -1,55 +1,117 @@
 $(document).ready(function() {
-    $('#get_name').click(function() {
 
-
-
-    });
-
-    $('#set_name').click(function() {
-        var inputName = $("#input_name").val()
-        jsRoutes.controllers.HomeController.updateName(inputName).ajax({
-            success: function(result) {
-                $("#name").text(result);
+    $('#add_phone').click(function() {
+        var phoneForm = {
+            phoneNumber:$("#input_phone").val(),
+            name: $("#input_name").val()
+        }
+        $.ajax({
+            url: '/phones/createNewPhone',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(phoneForm),
+            complete: function() {
+                $("#status").text(phoneForm.name + ' saved!');
+                $.all();
             },
             failure: function(err) {
-                var errorText = 'There was an error';
-                $("#name").text(errorText);
+                $("#status").text('There was an error');
             }
         });
     });
+
+    $('#all').click(function() {
+        $.all();
+    });
+    $.all = function() {
+        jsRoutes.controllers.HomeController.getPhones().ajax({
+            success: function(result) {
+                createTable(result);
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    }
 
     $('#searchByName').click(function() {
-        $('#main_table').empty();
-        var inputName = $("#input_name").val()
+        var inputName = $("#input_name").val();
         jsRoutes.controllers.HomeController.byName(inputName).ajax({
             success: function(result) {
-                var table = "<table border='1'>"
-                table += '<tr><td>' + 'Name' + '</td><td>' + 'Phone' + '</td><td>' + 'Delete' + '</td></tr>';
-                for(i in result) {
-                    table += '<tr>';
-                    table += '<td>' + result[i].name + '</td>';
-                    table += '<td>' + result[i].phone + '</td>';
-                    table += '<td><button type="button" class="deletebtn' + i + '" title="Remove row">Delete ' + result[i].name + '</button></td>';
-                    $(document).on('click', 'button.deletebtn' + i, function () {
-                    var name = result[i].name;
-                        $.ajax({
-                            url: 'http://localhost:9000/phone/' + result[i].id,
-                            method: 'DELETE',
-                            success: function() {
-                                $("#name").text(name + ' deleted!');
-                            },
-                        });
-                    });
-                    table += '</tr>';
-                }
-                table += "</table>"
-                $('#main_table').append(table);
+                createTable(result);
             },
             failure: function(err) {
-                var errorText = 'There was an error';
-                $("#name").text(errorText);
+                $("#status").text('There was an error');
             }
         });
     });
+
+    $('#searchByPhone').click(function() {
+        var inputPhone = $("#input_phone").val();
+        jsRoutes.controllers.HomeController.byPhone(inputPhone).ajax({
+            success: function(result) {
+                createTable(result);
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    });
+
+    function createTable(result) {
+        $('#main_table').empty();
+        var table = "<table border='1'>"
+        table += '<tr><td><b>Name</b></td><td><b>Phone</b></td><td><b>Delete</b></td><td><b>Update</b></td></tr>';
+        for(i in result) {
+            table += '<tr>';
+            table += '<td>' + result[i].name + '</td>';
+            table += '<td>' + result[i].phone + '</td>';
+            table += '<td><button type="button" id="' + result[i].id + '"class="deletebtn" title="Delete Contact">Delete</button></td>';
+            table += '<td><button type="button" id="' + result[i].id + '"class="updatebtn" title="Update Contact">Update ' + '</button></td>';
+            table += '</tr>';
+        }
+        table += "</table>"
+        $('#main_table').append(table);
+    };
+
+    $(document).on('click', 'button.deletebtn', function () {
+        var id = $(this).attr('id');
+        $.ajax({
+            url: '/phone/' + id,
+            type: 'DELETE',
+            success: function() {
+                $("#status").text('id ' + id + ' deleted');
+                $.all();
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    });
+
+    $(document).on('click', 'button.updatebtn', function () {
+        var id = $(this).attr('id');
+        var phoneForm = {
+            phoneNumber:$("#input_phone").val(),
+            name: $("#input_name").val()
+        }
+        $.ajax({
+            url: '/phone/' + id,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(phoneForm),
+            complete: function() {
+                $("#status").text(phoneForm.name + ' updated');
+                $.all();
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    });
+
+    $.all();
 
 });

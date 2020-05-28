@@ -25,7 +25,7 @@ import play.api.routing.JavaScriptReverseRouter
 class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index("Play"))
+    Ok(views.html.index("Phonebook"))
   }
 
   val phoneForm: Form[PhoneForm] = Form(
@@ -37,7 +37,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
   def addPhone()= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
-      _ => { BadRequest(views.html.index("Play")) },
+      _ => { BadRequest(views.html.index("Phonebook")) },
       phone => {
         DB.add(phone)
         Redirect(routes.HomeController.index)
@@ -52,7 +52,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
   def modPhone(id: Long)= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
-      _ => { BadRequest(views.html.index("Play")) },
+      _ => { BadRequest(views.html.index("Phonebook")) },
       phone => {
         DB.mod(id, phone)
         Redirect(routes.HomeController.index)
@@ -73,7 +73,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     )
   }
 
-  def byNumber(phoneSubstring: String) = Action { //implicit request =>
+  def byPhone(phoneSubstring: String) = Action { //implicit request =>
     Ok(
       Json.toJson(
         DB.phoneLike(phoneSubstring)
@@ -81,34 +81,20 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     )
   }
 
-
   def all() = Action {
     Ok(Json.toJson(DB.all()))
-  }
-
-
-  def getName = Action { //implicit request =>
-    Ok(Json.toJson(NameStorage.getName))
-  }
-
-  def updateName(name: String) = Action { //implicit request =>
-    NameStorage.setName(name)
-    Ok(Json.toJson(NameStorage.getName))
   }
 
   def jsRoutes = Action { implicit request =>
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.HomeController.getName,
-        routes.javascript.HomeController.updateName,
         routes.javascript.HomeController.addPhone,
         routes.javascript.HomeController.getPhones,
         routes.javascript.HomeController.modPhone,
         routes.javascript.HomeController.delPhone,
         routes.javascript.HomeController.byName,
-        routes.javascript.HomeController.byNumber
+        routes.javascript.HomeController.byPhone
       )).as("text/javascript")
   }
-
 
 }

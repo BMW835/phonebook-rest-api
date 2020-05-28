@@ -8,13 +8,3 @@ case class Phone(
 case class PhoneForm(
                       phone: String,
                       name: String)
-
-object NameStorage {
-  private var mName = "Bob1"
-
-  def setName(name: String): Unit = {
-    mName = name
-  }
-
-  def getName: String = mName
-}
