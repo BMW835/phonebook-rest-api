@@ -80,6 +80,16 @@ trait Database {
     }
   }
 
+  def idLike(id: Long): List[Phone] = {
+    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
+    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+      implicit session =>
+        val phones = TableQuery[Phonebook]
+
+        phones.filter(_.id === id).list.map { case (id, name, phone, time) => Phone(id, name, phone, time) }
+    }
+  }
+
   def delByTime(): Unit = {
     val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
     Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {

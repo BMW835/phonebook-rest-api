@@ -59,6 +59,52 @@ $(document).ready(function() {
         });
     });
 
+    $('#searchById').click(function() {
+        var inputId = $("#input_id").val();
+        jsRoutes.controllers.HomeController.byId(inputId).ajax({
+            success: function(result) {
+                createTable(result);
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    });
+
+    $('#print_phone').click(function() {
+        var phoneForm = {
+            phoneNumber:$("#input_phone").val(),
+            name: $("#input_name").val()
+        }
+        $.ajax({
+            url: '/phones/printPhone',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(phoneForm),
+            complete: function() {
+                $("#status").text(phoneForm.name + ' saved and printed to /tmp/' + phoneForm.name + '.txt');
+                $.all();
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    });
+
+    $('#read_phone').click(function() {
+        var inputPath = $("#input_path").val();
+        jsRoutes.controllers.HomeController.readPhone(inputPath).ajax({
+            success: function(result) {
+                $("#status").text('Contact from ' + inputPath + ' saved!');
+                $.all();
+            },
+            failure: function(err) {
+                $("#status").text('There was an error');
+            }
+        });
+    });
+
     function createTable(result) {
         $('#main_table').empty();
         var table = "<table border='1'>"

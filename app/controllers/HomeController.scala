@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import controllers.CustomMappers._
 import models._
 import javax.inject._
-
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms.mapping
@@ -15,6 +14,8 @@ import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import java.io._
+import scala.io.Source
 
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
@@ -33,8 +34,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def addPhone()= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Phonebook")) },
-      phone => {
-        DB.add(phone)
+      contact => {
+        DB.add(contact)
         Redirect(routes.HomeController.index)
       })
   }
@@ -46,8 +47,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def modPhone(id: Long)= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Phonebook")) },
-      phone => {
-        DB.mod(id, phone)
+      contact => {
+        DB.mod(id, contact)
         Redirect(routes.HomeController.index)
       })
   }
@@ -73,6 +74,36 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     )
   }
 
+  def byId(idSubstring: Long) = Action {
+    Ok(
+      Json.toJson(
+        DB.idLike(idSubstring)
+      )
+    )
+  }
+
+  def printPhone()= Action { implicit request =>
+      phoneForm.bindFromRequest.fold(
+        _ => { BadRequest(views.html.index("Phonebook")) },
+        contact => {
+          val n = contact.name
+          val p = contact.phone
+          new PrintWriter(s"/tmp/$n.txt") { write(s"$n,$p"); close }
+          DB.add(contact)
+          Redirect(routes.HomeController.index)
+        }
+      )
+  }
+
+  def readPhone(inputPath: String) = Action {
+    Ok {
+      val file = Source.fromFile(inputPath).getLines.mkString.split(",").toList
+      val contact = PhoneForm(file(1), file(0))
+      DB.add(contact)
+      views.html.index("Phonebook")
+    }
+  }
+
   def delByTime() = Action {
     DB.delByTime()
     Ok
@@ -86,7 +117,10 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         routes.javascript.HomeController.modPhone,
         routes.javascript.HomeController.delPhone,
         routes.javascript.HomeController.byName,
-        routes.javascript.HomeController.byPhone
+        routes.javascript.HomeController.byPhone,
+        routes.javascript.HomeController.byId,
+        routes.javascript.HomeController.printPhone,
+        routes.javascript.HomeController.readPhone
       )).as("text/javascript")
   }
 

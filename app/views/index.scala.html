@@ -20,15 +20,26 @@
     <tr>
         <td>Input Name:</td>
         <td><input type="text" value="Name" id="input_name"></td>
-        <td><input type="button" value="Search by Name" id="searchByName" ></td>
+        <td><input type="button" value="Search by Name" id="searchByName" style="width:100%"></td>
     </tr>
     <tr>
         <td>Input Phone:</td>
-        <td><input type="text" value="0000" id="input_phone"></td>
-        <td><input type="button" value="Search by Phone" id="searchByPhone" ></td>
+        <td><input type="number" value="0000" id="input_phone"></td>
+        <td><input type="button" value="Search by Phone" id="searchByPhone" style="width:100%"></td>
+    </tr>
+    <tr>
+        <td>Input Id:</td>
+        <td><input type="number" value="0" id="input_id"></td>
+        <td><input type="button" value="Search by Id" id="searchById" style="width:100%"></td>
+    </tr>
+    <tr>
+        <td>Input Path:</td>
+        <td><input type="text" value="/tmp/Name.txt" id="input_path"></td>
+        <td><input type="button" value="Search by Id" id="read_phone" style="width:100%"></td>
     </tr>
 </table>
 <input type="button" value="Save New Contact" id="add_phone" >
+<input type="button" value="Save and Print Contact" id="print_phone" >
 <br>
 <span> Current status: </span>
 <span  id="status"></span>
