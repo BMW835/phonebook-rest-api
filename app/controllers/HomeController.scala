@@ -31,48 +31,37 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       "name" -> text
     )(PhoneForm.apply)(PhoneForm.unapply))
 
-  lazy val dbUrl =
-    try {
-      val prop = new Properties()
-      prop.load(new FileInputStream("application.properties"))
-      prop.getProperty("url")
-    } catch { case e: Exception =>
-      HomeController.logger.error("Properties file cannot be loaded")
-      e.printStackTrace()
-      sys.exit(1)
-    }
-
   def addPhone()= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Phonebook")) },
       phone => {
-        DB.add(dbUrl, phone)
+        DB.add(phone)
         Redirect(routes.HomeController.index)
       })
   }
 
   def getPhones() = Action {
-    Ok(Json.toJson(DB.all(dbUrl)))
+    Ok(Json.toJson(DB.all()))
   }
 
   def modPhone(id: Long)= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Phonebook")) },
       phone => {
-        DB.mod(dbUrl, id, phone)
+        DB.mod(id, phone)
         Redirect(routes.HomeController.index)
       })
   }
 
   def delPhone(id: Long) = Action {
-    DB.del(dbUrl, id)
+    DB.del(id)
     Ok
   }
 
   def byName(nameSubstring: String) = Action {
     Ok(
       Json.toJson(
-        DB.nameLike(dbUrl, nameSubstring)
+        DB.nameLike(nameSubstring)
       )
     )
   }
@@ -80,13 +69,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def byPhone(phoneSubstring: String) = Action {
     Ok(
       Json.toJson(
-        DB.phoneLike(dbUrl, phoneSubstring)
+        DB.phoneLike(phoneSubstring)
       )
     )
   }
 
   def delByTime() = Action {
-    DB.delByTime(dbUrl)
+    DB.delByTime()
     Ok
   }
 
@@ -106,7 +95,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   system.scheduler.scheduleAtFixedRate(initialDelay = 1.seconds, interval = 1.days) {
     new Runnable() {
       override def run(): Unit = {
-        DB.delByTime(dbUrl)
+        DB.delByTime()
       }
     }
   }
@@ -115,4 +104,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
 object HomeController {
   val logger: Logger = Logger(this.getClass())
+
+  lazy val dbUrl =
+    try {
+      val prop = new Properties()
+      prop.load(new FileInputStream("application.properties"))
+      prop.getProperty("url")
+    } catch { case e: Exception =>
+      HomeController.logger.error("Properties file cannot be loaded")
+      e.printStackTrace()
+      sys.exit(1)
+    }
 }

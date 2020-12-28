@@ -16,8 +16,11 @@ class Phonebook(tag: Tag) extends Table[(Long, String, String, Timestamp)](tag, 
 }
 
 trait Database {
-  def add(dbUrl: String, pf: PhoneForm): Unit = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+
+  lazy val db = Database.forURL(HomeController.dbUrl, driver = "org.postgresql.Driver")
+
+  def add(pf: PhoneForm): Unit = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -25,8 +28,8 @@ trait Database {
     }
   }
 
-  def all(dbUrl: String): List[Phone] = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+  def all(): List[Phone] = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -34,8 +37,8 @@ trait Database {
     }
   }
 
-  def mod(dbUrl: String, id: Long, pf: PhoneForm): Unit = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+  def mod(id: Long, pf: PhoneForm): Unit = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -46,8 +49,8 @@ trait Database {
     }
   }
 
-  def del(dbUrl: String, id: Long): Unit = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+  def del(id: Long): Unit = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -57,8 +60,8 @@ trait Database {
     }
   }
 
-  def nameLike(dbUrl: String, sub: String): List[Phone] = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+  def nameLike(sub: String): List[Phone] = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -66,8 +69,8 @@ trait Database {
     }
   }
 
-  def phoneLike(dbUrl: String, sub: String): List[Phone] = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+  def phoneLike(sub: String): List[Phone] = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -75,8 +78,8 @@ trait Database {
     }
   }
 
-  def delByTime(dbUrl: String): Unit = {
-    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
+  def delByTime(): Unit = {
+    db.withSession{
       implicit session =>
         val phones = TableQuery[Phonebook]
 
