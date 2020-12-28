@@ -9,7 +9,7 @@ import models._
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{ControllerComponents, _}
 import play.api.routing.JavaScriptReverseRouter
 
@@ -18,7 +18,8 @@ import scala.concurrent.duration._
 
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
-  implicit val todoFormat = Json.format[Phone]
+
+  implicit val writes: Writes[Phone] = Json.writes[Phone]
 
   def index() = Action { implicit request: Request[AnyContent] =>
     Ok( views.html.index("Phonebook") )
