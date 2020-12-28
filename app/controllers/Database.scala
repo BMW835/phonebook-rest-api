@@ -1,10 +1,11 @@
 package controllers
 
+import java.sql.Timestamp
+import java.time.LocalDateTime
+
 import models._
 
 import scala.slick.driver.PostgresDriver.simple._
-import java.sql.Timestamp
-import java.time.LocalDateTime
 
 class Phonebook(tag: Tag) extends Table[(Long, String, String, Timestamp)](tag, "phones") {
   def id: Column[Long] = column[Long]("id")
@@ -15,9 +16,8 @@ class Phonebook(tag: Tag) extends Table[(Long, String, String, Timestamp)](tag, 
 }
 
 trait Database {
-  def add(pf: PhoneForm): Unit = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def add(dbUrl: String, pf: PhoneForm): Unit = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -25,9 +25,8 @@ trait Database {
     }
   }
 
-  def all(): List[Phone] = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def all(dbUrl: String): List[Phone] = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -35,9 +34,8 @@ trait Database {
     }
   }
 
-  def mod(id: Long, pf: PhoneForm): Unit = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def mod(dbUrl: String, id: Long, pf: PhoneForm): Unit = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -48,9 +46,8 @@ trait Database {
     }
   }
 
-  def del(id: Long): Unit = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def del(dbUrl: String, id: Long): Unit = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -60,9 +57,8 @@ trait Database {
     }
   }
 
-  def nameLike(sub: String): List[Phone] = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def nameLike(dbUrl: String, sub: String): List[Phone] = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -70,9 +66,8 @@ trait Database {
     }
   }
 
-  def phoneLike(sub: String): List[Phone] = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def phoneLike(dbUrl: String, sub: String): List[Phone] = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 
@@ -80,9 +75,8 @@ trait Database {
     }
   }
 
-  def delByTime(): Unit = {
-    val connectionUrl = "jdbc:postgresql://balarama.db.elephantsql.com:5432/isbgmvfg?user=isbgmvfg&password=PyjJxgZt_Gxirm6Z7hDAUOonsZiywZoM"
-    Database.forURL(connectionUrl, driver = "org.postgresql.Driver") withSession {
+  def delByTime(dbUrl: String): Unit = {
+    Database.forURL(dbUrl, driver = "org.postgresql.Driver") withSession {
       implicit session =>
         val phones = TableQuery[Phonebook]
 

@@ -1,16 +1,16 @@
 package controllers
 
-import akka.actor.ActorSystem
-import controllers.CustomMappers._
-import models._
-import javax.inject._
+import java.io.FileInputStream
+import java.util.Properties
 
-import play.api.mvc._
+import akka.actor.ActorSystem
+import javax.inject._
+import models._
+import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.mapping
-import play.api.data.Forms._
-import play.api.mvc.ControllerComponents
+import play.api.data.Forms.{mapping, _}
 import play.api.libs.json.Json
+import play.api.mvc.{ControllerComponents, _}
 import play.api.routing.JavaScriptReverseRouter
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,37 +30,48 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       "name" -> text
     )(PhoneForm.apply)(PhoneForm.unapply))
 
+  lazy val dbUrl =
+    try {
+      val prop = new Properties()
+      prop.load(new FileInputStream("application.properties"))
+      prop.getProperty("url")
+    } catch { case e: Exception =>
+      HomeController.logger.error("Properties file cannot be loaded")
+      e.printStackTrace()
+      sys.exit(1)
+    }
+
   def addPhone()= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Phonebook")) },
       phone => {
-        DB.add(phone)
+        DB.add(dbUrl, phone)
         Redirect(routes.HomeController.index)
       })
   }
 
   def getPhones() = Action {
-    Ok(Json.toJson(DB.all()))
+    Ok(Json.toJson(DB.all(dbUrl)))
   }
 
   def modPhone(id: Long)= Action { implicit request =>
     phoneForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Phonebook")) },
       phone => {
-        DB.mod(id, phone)
+        DB.mod(dbUrl, id, phone)
         Redirect(routes.HomeController.index)
       })
   }
 
   def delPhone(id: Long) = Action {
-    DB.del(id)
+    DB.del(dbUrl, id)
     Ok
   }
 
   def byName(nameSubstring: String) = Action {
     Ok(
       Json.toJson(
-        DB.nameLike(nameSubstring)
+        DB.nameLike(dbUrl, nameSubstring)
       )
     )
   }
@@ -68,13 +79,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def byPhone(phoneSubstring: String) = Action {
     Ok(
       Json.toJson(
-        DB.phoneLike(phoneSubstring)
+        DB.phoneLike(dbUrl, phoneSubstring)
       )
     )
   }
 
   def delByTime() = Action {
-    DB.delByTime()
+    DB.delByTime(dbUrl)
     Ok
   }
 
@@ -94,9 +105,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   system.scheduler.scheduleAtFixedRate(initialDelay = 1.seconds, interval = 1.days) {
     new Runnable() {
       override def run(): Unit = {
-        DB.delByTime()
+        DB.delByTime(dbUrl)
       }
     }
   }
 
+}
+
+object HomeController {
+  val logger: Logger = Logger(this.getClass())
 }
