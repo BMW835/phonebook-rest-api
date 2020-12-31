@@ -1,6 +1,6 @@
 # Phonebook REST API
 Запуск:
-1. Импорт sbt-проекта в IntelliJ IDEA из распакованного архива phonebook-rest-api.zip или из git-репозитория https://github.com/BMW835/phonebook-rest-api;
+1. Импорт sbt-проекта в IntelliJ IDEA из распакованного архива phonebook-rest-api.zip или из git-репозитория https://github.com/matvey-bubnov/phonebook-rest-api;
 2. Сборка проекта (Ctrl+F9);
 3. Запуск через sbt shell командой run.
 
